@@ -1,0 +1,3 @@
+#+title: Advent of Code 2025
+* Introduction
+I started advent of code a little late. We are going to try and solve all the problems here using OCaml, since I think that would be mentally stimulating.
