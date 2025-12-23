@@ -29,7 +29,31 @@ let tests_id_range_parsing =
            |> assert_equal (Ok (Id_range.cons_id_range "1234" "5678")) );
        ]
 
+let test_val_in_range =
+  "tests if a value is in a range"
+  >::: [
+         ( "basic test" >:: fun _ ->
+           Id_range.cons_id_range "101" "103"
+           |> (fun r -> Id_range.in_range r 102)
+           |> assert_equal true );
+       ]
+
+let tests_split_range =
+  "test the split_range function."
+  >::: [
+         ( "testing base invalid case" >:: fun _ ->
+           Id_range.cons_id_range "101" "101"
+           |> Id_range.split_range |> assert_equal [] );
+       ]
+
 let () =
-  let tests = [ tests_boundary_invalid_matcher; tests_id_range_parsing ] in
+  let tests =
+    [
+      tests_boundary_invalid_matcher;
+      tests_id_range_parsing;
+      tests_split_range;
+      test_val_in_range;
+    ]
+  in
   let _ = List.map run_test_tt_main tests in
   ()
