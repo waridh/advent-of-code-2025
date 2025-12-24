@@ -130,6 +130,15 @@ let test_is_lower_nines =
            String_number.is_lower_nines "1119999" |> assert_equal true );
        ]
 
+let test_clean_range_invalid_sum =
+  "testing if we could get the clean range sum"
+  >::: [
+         ( "425000-445999" >:: fun _ ->
+           Id_range.cons_id_range "425000" "445999"
+           |> Invalid_detector.get_clean_range_invalid_sum
+           |> assert_equal 9144135 ~printer:string_of_int );
+       ]
+
 let test_get_invalid_id_aux =
   "testing for the aux function for invalid id"
   >::: [
@@ -137,6 +146,10 @@ let test_get_invalid_id_aux =
            Id_range.cons_id_range "446443" "446449"
            |> Invalid_detector.get_invalid_id_aux
            |> assert_equal 446446 ~printer:string_of_int );
+         ( "424942-446151" >:: fun _ ->
+           Id_range.cons_id_range "424942" "446151"
+           |> Invalid_detector.get_invalid_id_aux
+           |> assert_equal 9144135 ~printer:string_of_int );
        ]
 
 let test_get_invalid_id =
@@ -186,6 +199,26 @@ let test_get_invalid_id =
            Id_range.cons_id_range "2121212118" "2121212124"
            |> Invalid_detector.get_invalid_id
            |> assert_equal 0 ~printer:string_of_int );
+         ( "408-1000" >:: fun _ ->
+           Id_range.cons_id_range "408" "1000"
+           |> Invalid_detector.get_invalid_id
+           |> assert_equal 0 ~printer:string_of_int );
+         ( "424942-446151" >:: fun _ ->
+           Id_range.cons_id_range "424942" "446151"
+           |> Invalid_detector.get_invalid_id
+           |> assert_equal 9144135 ~printer:string_of_int );
+         ( "25-57" >:: fun _ ->
+           Id_range.cons_id_range "25" "57"
+           |> Invalid_detector.get_invalid_id
+           |> assert_equal (33 + 44 + 55) ~printer:string_of_int );
+         ( "21-57" >:: fun _ ->
+           Id_range.cons_id_range "21" "57"
+           |> Invalid_detector.get_invalid_id
+           |> assert_equal (22 + 33 + 44 + 55) ~printer:string_of_int );
+         ( "21-54" >:: fun _ ->
+           Id_range.cons_id_range "21" "54"
+           |> Invalid_detector.get_invalid_id
+           |> assert_equal (22 + 33 + 44) ~printer:string_of_int );
        ]
 
 let test_get_invalid_ids =
@@ -221,6 +254,7 @@ let () =
       tests_get_lower_sub_string;
       test_is_lower_zero;
       test_is_lower_nines;
+      test_clean_range_invalid_sum;
       test_get_invalid_id_aux;
       test_get_invalid_id;
       test_get_invalid_ids;

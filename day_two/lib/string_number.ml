@@ -14,6 +14,9 @@ let get_lower_half_digit s =
   let s_len = String.length s in
   s_len / 2 |> fun x -> String.sub s x (s_len - x)
 
+let int_of_upper_half_string_number s =
+  s |> get_upper_half_digit |> int_of_string
+
 let is_lower_zero s = get_lower_half_digit s |> int_of_string |> fun x -> x = 0
 
 let is_lower_nines s =

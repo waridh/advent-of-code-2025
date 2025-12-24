@@ -25,7 +25,10 @@ let () =
             print_endline "found error";
             None
           end)
-    |> Invalid_detector.get_invalid_ids |> print_int;
+    (* |> List.map Invalid_detector.get_invalid_id *)
+    (* |> List.map string_of_int |> print_string_list; *)
+    |> Invalid_detector.get_invalid_ids
+    |> print_int |> print_newline;
     close_in ic
   with e ->
     close_in_noerr ic;
