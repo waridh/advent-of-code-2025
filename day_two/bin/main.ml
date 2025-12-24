@@ -1,6 +1,7 @@
 open Day_two
 
-let file = Sys.argv.(1)
+let file = Sys.argv.(2)
+let mode = Sys.argv.(1)
 
 (* let rec print_string_list (l : string list) = *)
 (*   match l with *)
@@ -15,21 +16,26 @@ let () =
   let ic = open_in file in
   try
     let line = input_line ic in
-
-    line |> String.split_on_char ','
-    |> List.map Id_range.id_range_of_string
-    |> List.filter_map (fun x ->
-        match x with
-        | Ok y -> Some y
-        | Error _ -> begin
-            print_endline "found error";
-            None
-          end)
-    (* |> List.map Invalid_detector.get_invalid_id *)
-    (* |> List.map string_of_int |> print_string_list; *)
-    |> Invalid_detector.get_invalid_ids
-    |> print_int |> print_newline;
-    close_in ic
+    match mode with
+    | "part-1" ->
+        line |> String.split_on_char ','
+        |> List.map Id_range.id_range_of_string
+        |> List.filter_map (fun x ->
+            match x with
+            | Ok y -> Some y
+            | Error _ -> begin
+                print_endline "found error";
+                None
+              end)
+        (* |> List.map Invalid_detector.get_invalid_id *)
+        (* |> List.map string_of_int |> print_string_list; *)
+        |> Invalid_detector.get_invalid_ids
+        |> print_int |> print_newline;
+        close_in ic
+    | "part-2" -> print_endline "not yet implemented"
+    | _ ->
+        print_endline
+          ("invalid mode, " ^ mode ^ " please choose either part-1 or part-2")
   with e ->
     close_in_noerr ic;
     raise e
