@@ -22,7 +22,7 @@ let in_range r v =
 (** Constructor for the id_range from the string representation *)
 let id_range_of_string s =
   if String.contains s '-' |> not then
-    Error ("could not fine - delimiter in: " ^ s)
+    Error ("could not find - delimiter in: " ^ s)
   else
     match
       String.split_on_char '-' s |> List.map String.trim
@@ -34,12 +34,33 @@ let id_range_of_string s =
 (** checks if input is even *)
 let is_even x = x mod 2 = 0
 
+let make_nines len = String.make len '9'
+let make_lowest_nd_val n = "1" ^ String.make (n - 1) '0'
+
+let cons_narrowed_range ll ul =
+  cons_id_range (make_lowest_nd_val ll) (make_nines ul)
+
 (** splits the range instance into a list of subranges that could have an
     invalid ID *)
-let split_range r =
+let rec split_range r =
   let lower_r_l = lower_length r in
   let upper_r_l = upper_length r in
   if lower_r_l = upper_r_l then if is_even lower_r_l then [ r ] else []
   else if upper_r_l > lower_r_l then
-    [ { lower = r.lower; upper = String.make lower_r_l '9' } ]
+    let upper_even = is_even upper_r_l in
+    let lower_even = is_even lower_r_l in
+    if upper_even && lower_even then
+      (make_nines lower_r_l |> cons_id_range r.lower)
+      :: (narrowed_split_range lower_r_l upper_r_l
+         @ [ cons_id_range (make_lowest_nd_val upper_r_l) r.upper ])
+    else if upper_even then
+      narrowed_split_range lower_r_l upper_r_l
+      @ [ cons_id_range (make_lowest_nd_val upper_r_l) r.upper ]
+    else if lower_even then
+      { lower = r.lower; upper = make_nines lower_r_l }
+      :: narrowed_split_range lower_r_l upper_r_l
+    else narrowed_split_range lower_r_l upper_r_l
   else []
+
+and narrowed_split_range lower_length upper_length =
+  split_range (cons_narrowed_range (lower_length + 1) (upper_length - 1))
