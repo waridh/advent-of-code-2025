@@ -26,10 +26,12 @@ let () =
         |> List.filter_map (fun x ->
             match x with Ok a -> Some a | Error _ -> None)
         |> Invalid_detector2.invalid_id_sum_of_ranges |> print_int
-        |> print_newline
+        |> print_newline;
+        close_in ic
     | _ ->
         print_endline
-          ("invalid mode, " ^ mode ^ " please choose either part-1 or part-2")
+          ("invalid mode, " ^ mode ^ " please choose either part-1 or part-2");
+        close_in ic
   with e ->
     close_in_noerr ic;
     raise e
