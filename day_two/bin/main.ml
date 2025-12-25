@@ -3,15 +3,6 @@ open Day_two
 let file = Sys.argv.(2)
 let mode = Sys.argv.(1)
 
-(* let rec print_string_list (l : string list) = *)
-(*   match l with *)
-(*   | [] -> () *)
-(*   | h :: t -> begin *)
-(*       print_endline h; *)
-(*       print_newline (); *)
-(*       print_string_list t *)
-(*     end *)
-
 let () =
   let ic = open_in file in
   try
@@ -27,12 +18,15 @@ let () =
                 print_endline "found error";
                 None
               end)
-        (* |> List.map Invalid_detector.get_invalid_id *)
-        (* |> List.map string_of_int |> print_string_list; *)
-        |> Invalid_detector.get_invalid_ids
-        |> print_int |> print_newline;
+        |> Invalid_detector.get_invalid_ids |> print_int |> print_newline;
         close_in ic
-    | "part-2" -> print_endline "not yet implemented"
+    | "part-2" ->
+        line |> String.split_on_char ','
+        |> List.map Id_range.id_range_of_string
+        |> List.filter_map (fun x ->
+            match x with Ok a -> Some a | Error _ -> None)
+        |> Invalid_detector2.invalid_id_sum_of_ranges |> print_int
+        |> print_newline
     | _ ->
         print_endline
           ("invalid mode, " ^ mode ^ " please choose either part-1 or part-2")

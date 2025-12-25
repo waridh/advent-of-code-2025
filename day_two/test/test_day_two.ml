@@ -221,26 +221,136 @@ let test_get_invalid_id =
            |> assert_equal (22 + 33 + 44) ~printer:string_of_int );
        ]
 
+let provided_test_range =
+  [
+    ("11", "22");
+    ("95", "115");
+    ("998", "1012");
+    ("1188511880", "1188511890");
+    ("222220", "222224");
+    ("1698522", "1698528");
+    ("446443", "446449");
+    ("38593856", "38593862");
+    ("565653", "565659");
+    ("824824821", "824824827");
+    ("2121212118", "2121212124");
+  ]
+
 let test_get_invalid_ids =
   "testing if we could convert a list of ranges to the number of invalid values"
   >::: [
          ( "testing the provided example" >:: fun _ ->
-           make_range_list
-             [
-               ("11", "22");
-               ("95", "115");
-               ("998", "1012");
-               ("1188511880", "1188511890");
-               ("222220", "222224");
-               ("1698522", "1698528");
-               ("446443", "446449");
-               ("38593856", "38593862");
-               ("565653", "565659");
-               ("824824821", "824824827");
-               ("2121212118", "2121212124");
-             ]
+           make_range_list provided_test_range
            |> Invalid_detector.get_invalid_ids
            |> assert_equal 1227775554 ~printer:string_of_int );
+       ]
+
+let test_part_2_detect_match_aux =
+  "testing if we could detect arbitrary string match in part 2 using auxilery \
+   function"
+  >::: [
+         ( "basic test" >:: fun _ ->
+           Invalid_detector2.detect_match_aux "1" "11"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "basic fail" >:: fun _ ->
+           Invalid_detector2.detect_match_aux "1" "12"
+           |> assert_equal false ~printer:string_of_bool );
+         ( "duplicate pass" >:: fun _ ->
+           Invalid_detector2.detect_match_aux "1" "11111111"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "duplicate pass 2" >:: fun _ ->
+           Invalid_detector2.detect_match_aux "111" "1111111"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "duplicate pass fail" >:: fun _ ->
+           Invalid_detector2.detect_match_aux "111" "11111112"
+           |> assert_equal false ~printer:string_of_bool );
+         ( "complex match pass" >:: fun _ ->
+           Invalid_detector2.detect_match_aux "123412123" "123412123412123412"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "complex match pass fail" >:: fun _ ->
+           Invalid_detector2.detect_match_aux "123412123" "12341212341212341"
+           |> assert_equal false ~printer:string_of_bool );
+       ]
+
+let test_part_2_detect_match =
+  "testing if we could detect arbitrary string match in part 2 using auxilery \
+   function"
+  >::: [
+         ( "basic test" >:: fun _ ->
+           Invalid_detector2.detect_match "11"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "basic fail" >:: fun _ ->
+           Invalid_detector2.detect_match "12"
+           |> assert_equal false ~printer:string_of_bool );
+         ( "duplicate pass" >:: fun _ ->
+           Invalid_detector2.detect_match "11111111"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "duplicate pass 2" >:: fun _ ->
+           Invalid_detector2.detect_match "1111111"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "duplicate pass fail" >:: fun _ ->
+           Invalid_detector2.detect_match "11111112"
+           |> assert_equal false ~printer:string_of_bool );
+         ( "complex match pass" >:: fun _ ->
+           Invalid_detector2.detect_match "123412123412123412"
+           |> assert_equal true ~printer:string_of_bool );
+         ( "complex match pass fail" >:: fun _ ->
+           Invalid_detector2.detect_match "12341212341212341"
+           |> assert_equal false ~printer:string_of_bool );
+       ]
+
+let test_part_2_invalid_id_of_range =
+  "testing if we could accumulate all the invalid ID of a range"
+  >::: [
+         ( "11-22" >:: fun _ ->
+           Id_range.cons_id_range "11" "22"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 33 ~printer:string_of_int );
+         ( "95-115" >:: fun _ ->
+           Id_range.cons_id_range "95" "115"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal (99 + 111) ~printer:string_of_int );
+         ( "998-1012" >:: fun _ ->
+           Id_range.cons_id_range "998" "1012"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal (999 + 1010) ~printer:string_of_int );
+         ( "1188511880-1188511890" >:: fun _ ->
+           Id_range.cons_id_range "1188511880" "1188511890"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 1188511885 ~printer:string_of_int );
+         ( "222220-222224" >:: fun _ ->
+           Id_range.cons_id_range "222220" "222224"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 222222 ~printer:string_of_int );
+         ( "1698522-1698528" >:: fun _ ->
+           Id_range.cons_id_range "1698522" "1698528"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 0 ~printer:string_of_int );
+         ( "446443-446449" >:: fun _ ->
+           Id_range.cons_id_range "446443" "446449"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 446446 ~printer:string_of_int );
+         ( "38593856-38593862" >:: fun _ ->
+           Id_range.cons_id_range "38593856" "38593862"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 38593859 ~printer:string_of_int );
+         ( "565653-565659" >:: fun _ ->
+           Id_range.cons_id_range "565653" "565659"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 565656 ~printer:string_of_int );
+         ( "824824821-824824827" >:: fun _ ->
+           Id_range.cons_id_range "824824821" "824824827"
+           |> Invalid_detector2.invalid_id_of_range
+           |> assert_equal 824824824 ~printer:string_of_int );
+       ]
+
+let test_invalid_id_sum_of_ranges =
+  "testing if we could convert a list of ranges to the number of invalid values"
+  >::: [
+         ( "testing the provided example" >:: fun _ ->
+           make_range_list provided_test_range
+           |> Invalid_detector2.invalid_id_sum_of_ranges
+           |> assert_equal 4174379265 ~printer:string_of_int );
        ]
 
 let () =
@@ -258,6 +368,10 @@ let () =
       test_get_invalid_id_aux;
       test_get_invalid_id;
       test_get_invalid_ids;
+      test_part_2_detect_match_aux;
+      test_part_2_detect_match;
+      test_part_2_invalid_id_of_range;
+      test_invalid_id_sum_of_ranges;
     ]
   in
   let _ = List.map run_test_tt_main tests in

@@ -13,6 +13,14 @@ let upper_length r = r.upper |> String.length
 
 let int_of_lower r = int_of_string r.lower
 let int_of_upper r = int_of_string r.upper
+let size r = int_of_upper r - int_of_lower r + 1
+
+let stream_of_range r =
+  Seq.iterate (fun x -> x + 1) (int_of_lower r) |> Seq.take (size r)
+
+let filter_range f r = r |> stream_of_range |> Seq.filter f
+let map_over_range f r = r |> stream_of_range |> Seq.map f
+let map_reduce_over_range fm fr r = r |> map_over_range fm |> Seq.fold_left fr
 
 let in_range r v =
   let lower_r = int_of_lower r in
