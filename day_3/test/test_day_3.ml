@@ -38,6 +38,57 @@ let test_part_1_process_row =
            |> assert_equal (9, 2) ~printer:pair_printer );
        ]
 
+let test_part_2_split_furthest =
+  "function for finding the largest and deepest value, as well as returning \
+   the rest of the list"
+  >::: [
+         ( "basic testing" >:: fun _ ->
+           Part_2.split_furthest_large_value
+             [ 8; 1; 8; 1; 8; 1; 9; 1; 1; 1; 1; 2; 1; 1; 1 ]
+           |> assert_equal (9, [ 8; 1; 8; 1; 8; 1 ]) );
+         ( "basic testing 2" >:: fun _ ->
+           Part_2.split_furthest_large_value
+             [ 1; 1; 1; 1; 1; 1; 1; 2; 3; 4; 5; 6; 7; 8; 9 ]
+           |> assert_equal (9, [ 1; 1; 1; 1; 1; 1; 1; 2; 3; 4; 5; 6; 7; 8 ]) );
+       ]
+
+let test_part_2_split_list =
+  "testing function that splits a list"
+  >::: [
+         ( "basic test" >:: fun _ ->
+           Part_2.split_list 1 [ 1; 2; 3; 4; 5; 6 ]
+           |> assert_equal ([ 1 ], [ 2; 3; 4; 5; 6 ]) );
+         ( "test 2" >:: fun _ ->
+           Part_2.split_list 0 [ 1; 2; 3; 4; 5; 6 ]
+           |> assert_equal ([], [ 1; 2; 3; 4; 5; 6 ]) );
+         ( "test 3" >:: fun _ ->
+           Part_2.split_list 3 [ 1; 2; 3; 4; 5; 6 ]
+           |> assert_equal ([ 1; 2; 3 ], [ 4; 5; 6 ]) );
+         ( "test 4" >:: fun _ ->
+           Part_2.split_list 6 [ 1; 2; 3; 4; 5; 6 ]
+           |> assert_equal ([ 1; 2; 3; 4; 5; 6 ], []) );
+         ( "test 5" >:: fun _ ->
+           Part_2.split_list 8 [ 1; 2; 3; 4; 5; 6 ]
+           |> assert_equal ([ 1; 2; 3; 4; 5; 6 ], []) );
+       ]
+
+let test_part_2_make_n_largest_values =
+  "testing if we could run the core logic of part 2"
+  >::: [
+         ( "test 1" >:: fun _ ->
+           Part_2.make_n_largest_values 12
+             [ 1; 1; 1; 1; 1; 1; 1; 2; 3; 4; 5; 6; 7; 8; 9 ]
+           |> assert_equal (Some [ 1; 1; 1; 1; 2; 3; 4; 5; 6; 7; 8; 9 ]) );
+         ( "test 2" >:: fun _ ->
+           Part_2.make_n_largest_values 12
+             [ 9; 8; 7; 6; 5; 4; 3; 2; 1; 1; 1; 1; 1; 1; 1 ]
+           |> assert_equal (Some [ 9; 8; 7; 6; 5; 4; 3; 2; 1; 1; 1; 1 ]) );
+         ( "test 3" >:: fun _ ->
+           Part_2.make_n_largest_values 12
+             [ 8; 1; 8; 1; 8; 1; 9; 1; 1; 1; 1; 2; 1; 1; 1 ]
+           |> assert_equal (Some [ 8; 8; 8; 9; 1; 1; 1; 1; 2; 1; 1; 1 ]) );
+       ]
+
 let () =
   begin
     let _ =
@@ -46,6 +97,9 @@ let () =
           test_part_1_find_largest_pair;
           test_row_list_of_row_string;
           test_part_1_process_row;
+          test_part_2_split_furthest;
+          test_part_2_split_list;
+          test_part_2_make_n_largest_values;
         ]
     in
     ()
